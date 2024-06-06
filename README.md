@@ -1,0 +1,2 @@
+# stattable
+internal fast statistics
