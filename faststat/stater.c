@@ -4,13 +4,20 @@
 
 #include "stater.h"
 
-static PGconn* conn = NULL;
-static PGresult* res = NULL;
+PGconn* conn = NULL;
+PGresult* res = NULL;
 
 struct DICT countries[MAXCOUNTRIES];
 struct DICT languages[MAXLANGUAGES];
 
-int main()      {
+int main(int argc, char *argv[])      {
+
+	if(argc < 5)	{
+
+		printf("usage: %s [type] [utime1] [utime2] [partition1] ...\n", argv[0]);
+		return 0;
+
+	}
 
 	conn = PQconnectdb("dbname=global");
 	
@@ -21,23 +28,19 @@ int main()      {
 
 	}
 
-	res = PQexec(conn, "select now()");
-	if(PQresultStatus(res) != PGRES_TUPLES_OK)	{
+	read_init(countries, get_countries);
+	read_init(languages, get_languages);
 
-		printf("%s\n", PQerrorMessage(conn));
-		return 1;
+	int type = atoi(argv[1]);
+	int u1 = atoi(argv[2]);
+	int u2 = atoi(argv[3]);
 
-	}
+	for(int i = 4; i < argc; i++)	{
 
-	int nrows = PQntuples(res);
-	for(int i = 0; i < nrows; i++)  {
-
-		char *w1  = PQgetvalue(res, i, 0);
-		printf("%s\n", w1);
+		printf("   Processing %s\n", argv[i]);
 
 	}
 
-	PQclear(res);
 	PQfinish(conn);
 
 	return 0;
