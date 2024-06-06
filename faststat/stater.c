@@ -2,8 +2,13 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
 
+#include "stater.h"
+
 static PGconn* conn = NULL;
 static PGresult* res = NULL;
+
+struct DICT countries[MAXCOUNTRIES];
+struct DICT languages[MAXLANGUAGES];
 
 int main()      {
 
