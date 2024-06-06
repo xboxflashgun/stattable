@@ -38,6 +38,7 @@ int main(int argc, char *argv[])      {
 	for(int i = 4; i < argc; i++)	{
 
 		printf("   Processing %s\n", argv[i]);
+		process(type, u1, u2, argv[i]);
 
 	}
 

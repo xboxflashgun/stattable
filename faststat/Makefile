@@ -1,5 +1,8 @@
-stater:	stater.o read-dicts.o
-	cc -o stater stater.o read-dicts.o -L /opt/pgpro/ent-15/lib -lpq
+stater:	stater.o read-dicts.o process.o
+	cc -o stater stater.o read-dicts.o process.o -L /opt/pgpro/ent-15/lib -lpq
+
+process.o: process.c
+	cc -c process.c -I/opt/pgpro/ent-15/include/ -L /opt/pgpro/ent-15/lib -lpq
 
 stater.o: stater.c
 	cc -c stater.c -I/opt/pgpro/ent-15/include/ -L /opt/pgpro/ent-15/lib -lpq

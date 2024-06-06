@@ -25,7 +25,6 @@ void read_init(struct DICT *dict, char *req)	{
 
 		strncpy(dict[i].name, w1, 3);
 		dict[i].id = atoi(w2);
-//		printf("%s %s\n", w1, w2);
 
 	}
 	PQclear(res);
