@@ -35,7 +35,6 @@ struct LINE * readstr()	{
 	num.c[0] = (*buffer)[1];
 	num.c[1] = (*buffer)[0];
 
-	printf("%x, ", num.i);
 	if(num.i == 0xffff)
 		return NULL;
 
@@ -68,8 +67,6 @@ struct LINE * readstr()	{
 	num.c[1] = (*buffer)[36];
 	num.c[2] = (*buffer)[35];
 	num.c[3] = (*buffer)[34];
-
-	printf("sl=%d: ", num.i);
 
 	if(num.i < 0)
 		line.l.secs = u2-u1;

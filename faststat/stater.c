@@ -7,11 +7,9 @@
 PGconn* conn = NULL;
 PGresult* res = NULL;
 
-struct DICT countries[MAXCOUNTRIES];
-struct DICT languages[MAXLANGUAGES];
-
-int N, u1, u2;
+int type, u1, u2;
 struct XUID *xuids;
+int N = NINCREMENT, tree = -1, fp;
 
 int main(int argc, char *argv[])      {
 
@@ -31,9 +29,13 @@ int main(int argc, char *argv[])      {
 
 	}
 
-	int type = atoi(argv[1]);
+	type = atoi(argv[1]);
 	u1 = atoi(argv[2]);
 	u2 = atoi(argv[3]);
+
+	// initialize tree
+	xuids = calloc(NINCREMENT, sizeof(struct XUID));
+	N = NINCREMENT;
 
 	for(int i = 4; i < argc; i++)	{
 

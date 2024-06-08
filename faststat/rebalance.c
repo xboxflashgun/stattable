@@ -63,7 +63,7 @@ void rebalance()	{
 	mksort(0);
 
 	p = 0;
-	merge(0);
+	tree = merge(0);
 
 	free(sorted);
 

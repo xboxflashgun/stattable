@@ -5,6 +5,24 @@
 
 #include "stater.h"
 
+void addsecs(int p, int titleid, int secs)	{
+
+}
+
+static int maxdepth;
+
+void dump_tree(int p, int lev)	{
+
+	printf("   lev=%2d, %2d: %lld l->(%d) r->(%d)\n", lev, p, xuids[p].xuid, xuids[p].l, xuids[p].r);
+	if( xuids[p].l != -1 )
+		dump_tree(xuids[p].l, lev + 1);
+	if( xuids[p].r != -1 )
+		dump_tree(xuids[p].r, lev + 1);
+	if( lev > maxdepth )
+		maxdepth = lev;
+
+}
+
 void process_line(int8 xuid, int titleid, int utime, int secs)	{
 
 	int ut = utime, lt = utime + secs;
@@ -17,18 +35,47 @@ void process_line(int8 xuid, int titleid, int utime, int secs)	{
 	secs = lt - ut;
 
 	int p, np;
-	for(p = np = fp; p != -1;p = np)	{
+	for(p = np = tree; p != -1; )	{
 		if(xuid == xuids[p].xuid)
 			break;
+		np = p;
 		if(xuid > xuids[p].xuid)
-			np = xuids[p].r;
+			p = xuids[p].r;
 		else
-			np = xuids[p].l;
+			p = xuids[p].l;
 	}
 
-	if(p == -1)
-		p = fp++;		// next element in tree
-	if(np != -1)
+	if(p == -1)		{
+
+		p = fp++;						// next element in tree
+		xuids[p].xuid = xuid;
+		xuids[p].l = xuids[p].r = -1;	// no children in new node
+
+		if(np != -1)					// point parent to this node
+			if(xuid > xuids[np].xuid)
+				xuids[np].r = p;
+			else
+				xuids[np].l = p;
+		else
+			if(tree < 0)
+				tree = p;
+
+	} else
+		printf("found: %d\n", p);
+
+
+	addsecs(p, titleid, secs);
+
+	if(fp == N)		{					// no more free nodes
+		dump_tree(tree, 0);
+		printf("Maxdepth=%d, rebalancing:\n", maxdepth);
+		rebalance();
+		maxdepth = 0;
+		dump_tree(tree, 0);
+		exit(0);
+	}
+
+}
 
 
 void process(int type, int u1, int u2, char *part)	{
@@ -57,7 +104,6 @@ void process(int type, int u1, int u2, char *part)	{
 
 	while( line = readstr() )	{
 
-		printf("%lld %u %d %d\n", line->xuid, line->titleid, line->utime, line->secs);
 		process_line(line->xuid, line->titleid, line->utime, line->secs);
 
 	}
