@@ -9,17 +9,26 @@ void addsecs(int p, int titleid, int secs)	{
 
 }
 
-static int maxdepth;
+int maxdepth;
 
-void dump_tree(int p, int lev)	{
+static void subdump(int p, int lev)	{
 
-	printf("   lev=%2d, %2d: %lld l->(%d) r->(%d)\n", lev, p, xuids[p].xuid, xuids[p].l, xuids[p].r);
+//	printf("   lev=%2d, %2d: %lld l->(%d) r->(%d)\n", lev, p, xuids[p].xuid, xuids[p].l, xuids[p].r);
+
 	if( xuids[p].l != -1 )
-		dump_tree(xuids[p].l, lev + 1);
+		subdump(xuids[p].l, lev + 1);
 	if( xuids[p].r != -1 )
-		dump_tree(xuids[p].r, lev + 1);
+		subdump(xuids[p].r, lev + 1);
 	if( lev > maxdepth )
 		maxdepth = lev;
+
+}
+
+void dump_tree()	{
+
+	maxdepth = 0;
+	subdump(tree, 0);
+	printf("---> maxdepth = %d <---\n", maxdepth);
 
 }
 
@@ -67,12 +76,8 @@ void process_line(int8 xuid, int titleid, int utime, int secs)	{
 	addsecs(p, titleid, secs);
 
 	if(fp == N)		{					// no more free nodes
-		dump_tree(tree, 0);
-		printf("Maxdepth=%d, rebalancing:\n", maxdepth);
+		printf("Rebalancing:\n");
 		rebalance();
-		maxdepth = 0;
-		dump_tree(tree, 0);
-		exit(0);
 	}
 
 }

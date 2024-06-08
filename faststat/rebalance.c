@@ -12,7 +12,6 @@ static void mksort(int i)	{
 	if(xuids[i].l != -1)
 		mksort(xuids[i].l);
 
-	printf("pos %2d, el %2d (xuid=%lld)\n", p, i, xuids[i].xuid);
 	sorted[p++] = i;
 
 	if(xuids[i].r != -1)
@@ -20,58 +19,66 @@ static void mksort(int i)	{
 
 }
 
+int bits(int i) {
+
+	int b = 1;
+	while(i /= 2)
+		b++;
+	return b;
+
+}
+
+
 // create rebalanced tree from sorted array
-static int merge(int lev)	{
+static int merge()	{
 
-	int l,m,r;		// left, middle, right
-	if(lev == 0)	{
+	int i, st, l, r;
 
-		if(p < N)	{
-			l = sorted[p++];
-			if(p < N)	{
-				m = sorted[p++];
-				xuids[m].l = l;
-				if(p < N)	{
-					r = sorted[p++];
-					xuids[m].r = r;
-				}
-			} else
-				return l;
+	for(i=0; i < fp; i += 2)
+		xuids[sorted[i]].l = xuids[sorted[i]].r = -1;
+
+	for(st = 4; st/2 <= fp; st *= 2) {
+		printf("step=%d\n", st);
+		for(i = st/2 - 1; i < fp; i += st)   {
+			
+			l = i - st/4;
+			r = i + st/4;
+
+			if(r >= fp)  {
+
+				int d = (fp - st/2) % (st/4);
+				r = (d) ? i + bits(d) : -1;
+
+			}
+
+			// printf("    (%2d)<->(%2d) ----> (%2d)     (%2d)<->(%2d) ----> (%2d)\n", l, r, i, sorted[l], sorted[r], sorted[i]);
+
+			xuids[sorted[i]].l = sorted[l];
+			xuids[sorted[i]].r = (r == -1) ? -1 : sorted[r];
+
 		}
 
 	}
-
-	l = m;
-	if(p < N)	{
-		m = sorted[p++];
-		xuids[m].l = l;
-		if(p < N)	{
-			r = merge(lev + 1);
-			xuids[m].r = r;
-		}
-	} else
-		return l;
-
-	return m;
+	return sorted[st/4 - 1];
 
 }
 
 void rebalance()	{
 
-	sorted = calloc(N+NINCREMENT, sizeof(int));
+	sorted = calloc(N*2+2, sizeof(int));
 
-	printf("Sorting\n");
 	p = 0;
 	mksort(tree);
-	exit(0);
+	dump_tree();
 
-	printf("Merging\n");
-	p = 0;
-	tree = merge(tree);
+	tree = merge();
+	printf("N=%d, tree=%d\n", N, tree);
+	dump_tree();
+// 	exit(0);
 
 	free(sorted);
 
-	N += NINCREMENT;
+	N = N * 2 + 1;
 
 }
 

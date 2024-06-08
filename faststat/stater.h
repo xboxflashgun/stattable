@@ -26,7 +26,7 @@ struct XUID {
 
 extern void rebalance();
 
-#define NINCREMENT (40)
+#define NINCREMENT (7)
 extern struct XUID *xuids;
 extern int N;		// number of xuids so far
 extern int tree;	// root element index
@@ -50,5 +50,8 @@ struct LINE {
 };
 
 #pragma pack (pop)
+void dump_tree();
 
 struct LINE * readstr();
+
+
