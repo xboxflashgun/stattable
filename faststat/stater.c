@@ -10,6 +10,9 @@ PGresult* res = NULL;
 struct DICT countries[MAXCOUNTRIES];
 struct DICT languages[MAXLANGUAGES];
 
+int N;
+struct XUID *xuids;
+
 int main(int argc, char *argv[])      {
 
 	if(argc < 5)	{
@@ -27,9 +30,6 @@ int main(int argc, char *argv[])      {
 		return 1;
 
 	}
-
-	read_init(countries, get_countries);
-	read_init(languages, get_languages);
 
 	int type = atoi(argv[1]);
 	int u1 = atoi(argv[2]);
