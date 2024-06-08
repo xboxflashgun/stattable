@@ -36,7 +36,10 @@ struct XUID {
 extern void rebalance();
 
 extern struct XUID *xuids;
-extern int N;	// number of xuids so far
+extern int N;		// number of xuids so far
+extern int tree;	// root element index
+extern int fp;		// free index pointer (up to N)
+
 extern int u1;
 extern int u2;
 
