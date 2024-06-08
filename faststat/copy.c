@@ -5,55 +5,85 @@
 
 #include "stater.h"
 
-static struct LINE line;
+static union {
+	struct LINE l;
+	char c[sizeof(struct LINE)];
+} line;
 
 struct LINE * readstr()	{
 
 	static char *p;
 	static char **buffer = &p;
 
-	int8 xuid;
-	unsigned int titleid;
-	int utime;
-	int secs;
-
-	printf("str1\n");
-
 	int res;
 	res = PQgetCopyData(conn, buffer, 0);
 	if(res < 0)
 		return NULL;
 
-	printf("res=%d\n", res);
-	
+	/*
+	// dump buffer
 	for(int i=0; i!=res; i++)	{
-		if(i % 16 == 0)
-			printf("\n");
+		if(i % 10 == 0)
+			printf("\n%04d ", i);
 		printf("%02x ", *(unsigned char *)((*buffer)+i));
 	}
-	printf("\n");
+	printf("\n\n");		*/
 
-	printf(" > %016llx\n", *(int8 *)(*buffer));
-	printf(" > %016llx\n", *(int8 *)((*buffer)+8));
-	printf(" > %016llx\n", *(int8 *)(*buffer+16));
-	printf(" > %016llx\n", *(int8 *)(*buffer+24));
+	union intchar num;
+	num.i = 0;
 
-	xuid = *(int8 *)((*buffer) + 8);
-	titleid = *(unsigned int *)((*buffer) + 24);
-	utime = *(int *)((*buffer) + 32);
-	secs = *(int *)((*buffer) + 40);
+	num.c[0] = (*buffer)[1];
+	num.c[1] = (*buffer)[0];
 
-	printf("%llx %x %x %x\n", xuid,titleid,utime,secs);
+	printf("%x, ", num.i);
+	if(num.i == 0xffff)
+		return NULL;
 
-	// line.xuid = be64toh(xuid);
-	line.xuid = xuid;
-	line.titleid = be32toh(titleid);
-	line.utime = be32toh(utime);
-	line.secs = be32toh(secs);
+	// xuid
+	line.c[0] = (*buffer)[13];
+	line.c[1] = (*buffer)[12];
+	line.c[2] = (*buffer)[11];
+	line.c[3] = (*buffer)[10];
+	line.c[4] = (*buffer)[9];
+	line.c[5] = (*buffer)[8];
+	line.c[6] = (*buffer)[7];
+	line.c[7] = (*buffer)[6];
+
+	// titleid
+	line.c[8]  = (*buffer)[25];
+	line.c[9]  = (*buffer)[24];
+	line.c[10] = (*buffer)[23];
+	line.c[11] = (*buffer)[22];
+
+	// utime
+	line.c[12] = (*buffer)[33];
+	line.c[13] = (*buffer)[32];
+	line.c[14] = (*buffer)[31];
+	line.c[15] = (*buffer)[30];
+
+	// secs
+	
+	num.i = 0;	// secs length
+	num.c[0] = (*buffer)[37];
+	num.c[1] = (*buffer)[36];
+	num.c[2] = (*buffer)[35];
+	num.c[3] = (*buffer)[34];
+
+	printf("sl=%d: ", num.i);
+
+	if(num.i < 0)
+		line.l.secs = u2-u1;
+	else {
+
+		line.c[16] = (*buffer)[41];
+		line.c[17] = (*buffer)[40];
+		line.c[18] = (*buffer)[39];
+		line.c[19] = (*buffer)[38];
+	}
 
 	PQfreemem(*buffer);
 
-	return &line;
+	return &line.l;
 
 }
 

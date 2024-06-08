@@ -37,13 +37,23 @@ extern void rebalance();
 
 extern struct XUID *xuids;
 extern int N;	// number of xuids so far
+extern int u1;
+extern int u2;
+
+union intchar {
+	int i;
+	char c[4];
+};
 
 // copy.c
+#pragma pack (push, 4)
 struct LINE {
 	int8 xuid;
 	int titleid;
 	int utime;
 	int secs;
 };
+
+#pragma pack (pop)
 
 struct LINE * readstr();

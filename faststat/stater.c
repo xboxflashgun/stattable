@@ -10,7 +10,7 @@ PGresult* res = NULL;
 struct DICT countries[MAXCOUNTRIES];
 struct DICT languages[MAXLANGUAGES];
 
-int N;
+int N, u1, u2;
 struct XUID *xuids;
 
 int main(int argc, char *argv[])      {
@@ -32,8 +32,8 @@ int main(int argc, char *argv[])      {
 	}
 
 	int type = atoi(argv[1]);
-	int u1 = atoi(argv[2]);
-	int u2 = atoi(argv[3]);
+	u1 = atoi(argv[2]);
+	u2 = atoi(argv[3]);
 
 	for(int i = 4; i < argc; i++)	{
 

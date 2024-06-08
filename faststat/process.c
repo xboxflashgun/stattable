@@ -32,7 +32,6 @@ void process(int type, int u1, int u2, char *part)	{
 	while( line = readstr() )	{
 
 		printf("%lld %u %d %d\n", line->xuid, line->titleid, line->utime, line->secs);
-		exit(0);
 
 	}
 
