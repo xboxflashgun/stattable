@@ -9,12 +9,13 @@ int *sorted;
 // extract to sorted from xuids tree
 static void mksort(int i)	{
 
-	if(xuids[i].l)
+	if(xuids[i].l != -1)
 		mksort(xuids[i].l);
 
+	printf("pos %2d, el %2d (xuid=%lld)\n", p, i, xuids[i].xuid);
 	sorted[p++] = i;
 
-	if(xuids[i].r)
+	if(xuids[i].r != -1)
 		mksort(xuids[i].r);
 
 }
@@ -57,15 +58,20 @@ static int merge(int lev)	{
 
 void rebalance()	{
 
-	sorted = calloc(N, sizeof(int));
+	sorted = calloc(N+NINCREMENT, sizeof(int));
 
+	printf("Sorting\n");
 	p = 0;
-	mksort(0);
+	mksort(tree);
+	exit(0);
 
+	printf("Merging\n");
 	p = 0;
-	tree = merge(0);
+	tree = merge(tree);
 
 	free(sorted);
+
+	N += NINCREMENT;
 
 }
 
