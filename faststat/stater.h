@@ -26,7 +26,7 @@ struct XUID {
 
 extern void rebalance();
 
-#define NINCREMENT (7)
+#define NINCREMENT (65535)
 extern struct XUID *xuids;
 extern int N;		// number of xuids so far
 extern int tree;	// root element index

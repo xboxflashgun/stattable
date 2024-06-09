@@ -70,13 +70,14 @@ void process_line(int8 xuid, int titleid, int utime, int secs)	{
 				tree = p;
 
 	} else
-		printf("found: %d\n", p);
+		;
+		// printf("found: %d\n", p);
 
 
 	addsecs(p, titleid, secs);
 
 	if(fp == N)		{					// no more free nodes
-		printf("Rebalancing:\n");
+		printf("Rebalancing %d\n", fp);
 		rebalance();
 	}
 

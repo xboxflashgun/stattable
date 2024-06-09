@@ -38,7 +38,7 @@ static int merge()	{
 		xuids[sorted[i]].l = xuids[sorted[i]].r = -1;
 
 	for(st = 4; st/2 <= fp; st *= 2) {
-		printf("step=%d\n", st);
+		// printf("step=%d\n", st);
 		for(i = st/2 - 1; i < fp; i += st)   {
 			
 			l = i - st/4;
@@ -79,6 +79,14 @@ void rebalance()	{
 	free(sorted);
 
 	N = N * 2 + 1;
+
+	xuids = reallocarray(xuids, N, sizeof(struct XUID));
+	if(xuids == NULL)	{
+
+		printf("Out of memory\n");
+		exit(1);
+
+	}
 
 }
 
