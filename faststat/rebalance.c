@@ -69,10 +69,12 @@ void rebalance()	{
 
 	p = 0;
 	mksort(tree);
+	printf("Before: ");
 	dump_tree();
 
 	tree = merge();
-	printf("N=%d, tree=%d\n", N, tree);
+	printf("    N=%d, tree=%d\n", N, tree);
+	printf("After:  ");
 	dump_tree();
 // 	exit(0);
 
