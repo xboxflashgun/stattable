@@ -76,4 +76,6 @@ void process(int type, int u1, int u2, char *part)	{
 
 	}
 
+	printf("Total xuids: %d", xuids->fp);
+
 }

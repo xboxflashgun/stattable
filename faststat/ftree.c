@@ -10,6 +10,7 @@ static void rebalance(ftree *f);
 static void subdump(ftree *f, int p)	{
 
 	ftree_el *el = (ftree_el *) (f->a + p * f->so);
+	printf("    p=%2d l=%2d r=%2d\n", p, el->l, el->r);
 	if( el->l != -1 )
 		subdump(f, el->l);
 	if( el->r != -1 )
@@ -19,6 +20,7 @@ static void subdump(ftree *f, int p)	{
 
 void ftree_dump(ftree *f)	{
 
+	printf("  tree dump root=%d\n", f->root);
 	subdump(f, f->root);
 
 }
@@ -37,6 +39,8 @@ ftree *ftree_init(int N, int so, int (*comp)())	{
 
 int ftree_upsert(ftree *f, ftree_el *el)	{
 
+	el->l = el->r = -1;		// no children of a new el
+
 	if(f->root == -1)	{
 
 		f->root = 0;			// this is the first element
@@ -44,8 +48,6 @@ int ftree_upsert(ftree *f, ftree_el *el)	{
 		memcpy(f->a, el, f->so);
 		f->maxdepth = 1;
 
-		el->l = el->r = -1;		// no children yet
-		
 		return 0;
 
 	}
@@ -68,7 +70,6 @@ int ftree_upsert(ftree *f, ftree_el *el)	{
 		ftree_el *npp = ftree_get(f, np);	// link to parent el
 
 		memcpy(pp, el, f->so);			// copy new node to array
-		pp->l = pp->r = -1;					// no children in new node
 
 		if( f->comp(el, npp) > 0)
 			npp->r = p;
@@ -77,11 +78,8 @@ int ftree_upsert(ftree *f, ftree_el *el)	{
 
 	}
 
-	if(f->fp == f->N)	{
-
+	if(f->fp == f->N)
 		rebalance(f);
-	
-	}
 
 	return p;
 
@@ -105,29 +103,32 @@ static void mksort(ftree *f, int i)	{
 
 
 // create rebalanced tree from sorted array
-static int merge(ftree *f)	{
+static void merge(ftree *f)	{
 
 	int i, st, l, r;
 
+	// printf("  pass 1\n");
 	for(i=0; i < f->fp; i += 2)
-		ftree_get(f, i)->l = ftree_get(f, i)->r = -1;
+		ftree_get(f, sorted[i])->l = ftree_get(f, sorted[i])->r = -1;
 
 	for(st = 4; st/2 <= f->fp; st *= 2) {
-		// printf("step=%d\n", st);
 		for(i = st/2 - 1; i < f->fp; i += st)   {
 			
 			l = i - st/4;
 			r = i + st/4;
 
-			// printf("    (%2d)<->(%2d) ----> (%2d)     (%2d)<->(%2d) ----> (%2d)\n", l, r, i, sorted[l], sorted[r], sorted[i]);
-
 			ftree_get(f, sorted[i])->l = sorted[l];
-			ftree_get(f, sorted[i])->r = (r == -1) ? -1 : sorted[r];
+			ftree_get(f, sorted[i])->r = (r >= f->fp) ? -1 : sorted[r];
+
+			// printf("    %d ===> (%d) - (%d)     sorted: %d ===> (%d) - (%d)\n", i, l, r, sorted[i], sorted[l], sorted[r]);
 
 		}
 
 	}
-	return sorted[st/4 - 1];
+
+	f->root = sorted[st/4 - 1];
+	// printf("  tree after rebalancing, root=%d\n", f->root);
+	// ftree_dump(f);
 
 }
 
@@ -135,14 +136,17 @@ static void rebalance(ftree *f)	{
 
 	sorted = calloc(f->N, sizeof(int));
 
+	// printf("  tree before sorting:\n");
+	// ftree_dump(f);
+
 	sp = 0;
 	mksort(f, f->root);
 
-	f->root = merge(f);
+	// printf("  tree after sorting:\n");
+	// ftree_dump(f);
 
-	printf("    N=%d, tree=%d\n", f->N, f->root);
-	printf("After:  ");
-	ftree_dump(f);
+	// printf("merging fp=%d\n", f->fp);
+	merge(f);
 
 	free(sorted);
 
