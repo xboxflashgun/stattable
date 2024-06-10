@@ -5,36 +5,29 @@
 
 #include "stater.h"
 
-void addsecs(int p, int titleid, int secs)	{
+#define MAXTITLES (5)
+
+typedef struct {
+	ftree_el ftr;
+	uint64 xuid;
+	uint64 secs[MAXTITLES];
+	uint32 titleid[MAXTITLES];
+} XUID;
+
+static int xuidcomp(XUID *a, XUID *b)	{
+
+	return a->xuid - b->xuid;
 
 }
 
-int maxdepth;
+ftree *xuids;
 
-static void subdump(int p, int lev)	{
-
-//	printf("   lev=%2d, %2d: %lld l->(%d) r->(%d)\n", lev, p, xuids[p].xuid, xuids[p].l, xuids[p].r);
-
-	if( xuids[p].l != -1 )
-		subdump(xuids[p].l, lev + 1);
-	if( xuids[p].r != -1 )
-		subdump(xuids[p].r, lev + 1);
-	if( lev > maxdepth )
-		maxdepth = lev;
-
-}
-
-void dump_tree()	{
-
-	maxdepth = 0;
-	subdump(tree, 0);
-	printf("---> maxdepth = %d <---\n", maxdepth);
-
-}
-
-void process_line(int8 xuid, int titleid, int utime, int secs)	{
+void process_line(uint64 xuid, int titleid, int utime, int secs)	{
 
 	int ut = utime, lt = utime + secs;
+	int p;
+	XUID el;
+
 	if(ut >= u2 || lt < u1)
 		return;
 	if(ut < u1)
@@ -43,43 +36,11 @@ void process_line(int8 xuid, int titleid, int utime, int secs)	{
 		lt = u2;
 	secs = lt - ut;
 
-	int p, np;
-	for(p = np = tree; p != -1; )	{
-		if(xuid == xuids[p].xuid)
-			break;
-		np = p;
-		if(xuid > xuids[p].xuid)
-			p = xuids[p].r;
-		else
-			p = xuids[p].l;
-	}
 
-	if(p == -1)		{
+	memset(&el, 0, sizeof(el));
+	el.xuid = xuid;
 
-		p = fp++;						// next element in tree
-		xuids[p].xuid = xuid;
-		xuids[p].l = xuids[p].r = -1;	// no children in new node
-
-		if(np != -1)					// point parent to this node
-			if(xuid > xuids[np].xuid)
-				xuids[np].r = p;
-			else
-				xuids[np].l = p;
-		else
-			if(tree < 0)
-				tree = p;
-
-	} else
-		;
-		// printf("found: %d\n", p);
-
-
-	addsecs(p, titleid, secs);
-
-	if(fp == N)		{					// no more free nodes
-		printf("Rebalancing %d\n", fp);
-		rebalance();
-	}
+	p = ftree_upsert(xuids, (ftree_el *)&el);
 
 }
 
@@ -108,6 +69,7 @@ void process(int type, int u1, int u2, char *part)	{
 	printf("res-header=%d\n", r);
 	PQfreemem(*buffer);
 
+	xuids = ftree_init(15, sizeof(XUID), xuidcomp);
 	while( line = readstr() )	{
 
 		process_line(line->xuid, line->titleid, line->utime, line->secs);
