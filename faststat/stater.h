@@ -9,9 +9,6 @@ extern void process(int type, int u1, int u2, char *part);
 extern PGconn* conn;
 extern PGresult* res;
 
-// #define NINCREMENT (65535)
-#define NINCREMENT (8388607)
-
 // ftree: definitions
 typedef struct {
 	int l, r;

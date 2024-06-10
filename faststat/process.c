@@ -20,13 +20,26 @@ static int xuidcomp(XUID *a, XUID *b)	{
 
 }
 
+typedef struct {
+	ftree_el ftr;
+	uint32 titleid;
+} TITLEID;
+
+static int titleidcomp(TITLEID *a, TITLEID *b)	{
+
+	return a->titleid - b->titleid;
+
+}
+
 ftree *xuids;
+ftree *titleids;
 
 void process_line(uint64 xuid, int titleid, int utime, int secs)	{
 
 	int ut = utime, lt = utime + secs;
 	int p;
 	XUID el;
+	TITLEID t;
 
 	if(ut >= u2 || lt < u1)
 		return;
@@ -40,7 +53,10 @@ void process_line(uint64 xuid, int titleid, int utime, int secs)	{
 	memset(&el, 0, sizeof(el));
 	el.xuid = xuid;
 
+	memset(&t, 0, sizeof(t));
+
 	p = ftree_upsert(xuids, (ftree_el *)&el);
+	ftree_upsert(titleids, (ftree_el *)&t);
 
 }
 
@@ -69,13 +85,15 @@ void process(int type, int u1, int u2, char *part)	{
 	printf("res-header=%d\n", r);
 	PQfreemem(*buffer);
 
-	xuids = ftree_init(15, sizeof(XUID), xuidcomp);
+	xuids = ftree_init(65535, sizeof(XUID), xuidcomp);
+	titleids = ftree_init(8192, sizeof(TITLEID), titleidcomp);
+
 	while( line = readstr() )	{
 
 		process_line(line->xuid, line->titleid, line->utime, line->secs);
 
 	}
 
-	printf("Total xuids: %d", xuids->fp);
+	printf("Total xuids: %d, titleids: %d", xuids->fp, titleids->fp);
 
 }
