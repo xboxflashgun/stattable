@@ -54,6 +54,7 @@ void process_line(uint64 xuid, int titleid, int utime, int secs)	{
 	el.xuid = xuid;
 
 	memset(&t, 0, sizeof(t));
+	t.titleid = titleid;
 
 	p = ftree_upsert(xuids, (ftree_el *)&el);
 	ftree_upsert(titleids, (ftree_el *)&t);
