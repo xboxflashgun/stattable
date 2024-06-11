@@ -1,8 +1,8 @@
 #define uint64 unsigned long long
-#define uint32 unsigned long
+#define uint32 unsigned int
 #define uchar  unsigned char
 
-#pragma pack (push, 4)
+#pragma pack (push, 1)
 
 extern void process(int type, int u1, int u2, char *part);
 
@@ -27,11 +27,10 @@ typedef struct {
 } ftree;
 
 extern ftree *ftree_init(int N, int so, int (*comp)());
-// extern ftree_find(ftree *f, void *el);
 extern int ftree_upsert(ftree *f, ftree_el *el);
 extern void ftree_dump(ftree *f);
 extern void ftree_free(ftree *f);
-// 
+
 #define ftree_get(f,p) ((ftree_el *) (f->a + p * f->so))
 
 
@@ -44,16 +43,16 @@ union intchar {
 };
 
 // copy.c
-struct LINE {
+typedef struct {
 	uint64 xuid;
-	int titleid;
+	uint32 titleid;
 	int utime;
 	int secs;
-};
+} LINE;
 
 void dump_tree();
 
-struct LINE * readstr();
+LINE * readstr();
 
 
 #pragma pack (pop)

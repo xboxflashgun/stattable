@@ -5,12 +5,14 @@
 
 #include "stater.h"
 
+#pragma pack (push, 1)
 static union {
-	struct LINE l;
-	char c[sizeof(struct LINE)];
+	LINE l;
+	char c[sizeof(LINE)];
 } line;
+#pragma pack (pop)
 
-struct LINE * readstr()	{
+LINE * readstr()	{
 
 	static char *p;
 	static char **buffer = &p;

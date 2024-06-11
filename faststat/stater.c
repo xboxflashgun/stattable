@@ -31,8 +31,6 @@ int main(int argc, char *argv[])      {
 	u1 = atoi(argv[2]);
 	u2 = atoi(argv[3]);
 
-	// initialize tree
-
 	for(int i = 4; i < argc; i++)	{
 
 		printf("   Processing %s\n", argv[i]);
