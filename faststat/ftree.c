@@ -52,8 +52,8 @@ int ftree_upsert(ftree *f, ftree_el *el)	{
 
 	}
 
-	int p, np;
-	for(p = np = f->root; p != -1; )	{
+	int p, np, md = 0;
+	for(p = np = f->root; p != -1; md++ )	{
 		if( f->comp(ftree_get(f, p),el) == 0)
 			break;
 		np = p;
@@ -62,6 +62,9 @@ int ftree_upsert(ftree *f, ftree_el *el)	{
 		else
 			p = ftree_get(f, p)->l;
 	}
+
+	if(md > f->maxdepth)
+		f->maxdepth = md;
 
 	if(p == -1)		{
 
@@ -136,7 +139,7 @@ static void rebalance(ftree *f)	{
 
 	sorted = calloc(f->N, sizeof(int));
 
-	// printf("  tree before sorting:\n");
+	printf("Rebalancing with maxdepth=%d  N=%d\n", f->maxdepth, f->N);
 	// ftree_dump(f);
 
 	sp = 0;
@@ -159,6 +162,9 @@ static void rebalance(ftree *f)	{
 		exit(1);
 
 	}
+
+	f->maxdepth = 1;
+	printf("Rebalancing ended to N=%d\n", f->N);
 
 }
 

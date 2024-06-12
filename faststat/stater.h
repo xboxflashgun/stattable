@@ -31,7 +31,7 @@ extern int ftree_upsert(ftree *f, ftree_el *el);
 extern void ftree_dump(ftree *f);
 extern void ftree_free(ftree *f);
 
-#define ftree_get(f,p) ((ftree_el *) (f->a + p * f->so))
+#define ftree_get(f,p) ((ftree_el *) (f->a + (uint64)p * f->so))
 
 
 extern int u1;

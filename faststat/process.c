@@ -6,8 +6,8 @@
 
 #include "stater.h"
 
-#define MAXTITLES (5)
-#define TITPOOLSIZE (1024)
+#define MAXTITLES (12)
+#define TITPOOLSIZE (1000)
 
 #pragma pack (push, 4)
 
@@ -47,12 +47,14 @@ ftree *titleids;
 static TITINFO *tpool;		// link to allocated pool
 static int tpoolcnt;
 
+static int cnt1, cnt2, cntp;
+
 void process_line(uint64 xuid, uint32 titleid, int utime, int secs)	{
 
 	int ut = utime, lt = utime + secs;
 	int i, p;
-	XUID el;
-	TITLEID t;
+	static XUID el;
+	static TITLEID t;
 
 	if(ut >= u2 || lt < u1)
 		return;
@@ -64,12 +66,17 @@ void process_line(uint64 xuid, uint32 titleid, int utime, int secs)	{
 	if(secs == 0)
 		return;
 
+	// counting different titleids
+	memset(&t, 0, sizeof(t));
+	t.titleid = titleid;
+	ftree_upsert(titleids, (ftree_el *)&t);
+
 	memset(&el, 0, sizeof(el));
 	el.xuid = xuid;
 	p = ftree_upsert(xuids, (ftree_el *)&el);
 
 	// p -- index of xuid found
-	TITINFO *pl = (TITINFO *)(xuids->a + offsetof(XUID, pl) + p * xuids->so);
+	TITINFO *pl = (TITINFO *)(xuids->a + offsetof(XUID, pl) + (uint64)p * xuids->so);
 	
 	for(i = 0; i != MAXTITLES; i++)
 		if(pl->titleid[i] == titleid)
@@ -78,7 +85,7 @@ void process_line(uint64 xuid, uint32 titleid, int utime, int secs)	{
 			break;
 		else if(pl->titleid[i] == 1)	{
 			// pointer to new payload table
-			printf("p=%d i=%d titleid=%d pl->titleid[i]=%d pl=%p secs=%llx\n", p, i, titleid, pl->titleid[i], pl, pl->secs[i]);
+			// printf("p=%d i=%d titleid=%d pl->titleid[i]=%d pl=%p secs=%llx\n", p, i, titleid, pl->titleid[i], pl, pl->secs[i]);
 			pl = (TITINFO *)(pl->secs[i]);
 			i = 0;
 		}
@@ -88,9 +95,10 @@ void process_line(uint64 xuid, uint32 titleid, int utime, int secs)	{
 		// do wee need to allocate new pool?
 		if(tpoolcnt-- == 0)	{
 
-			tpool = calloc(TITPOOLSIZE, sizeof(TITINFO));
+			tpool = calloc(TITPOOLSIZE+1, sizeof(TITINFO));
 			tpoolcnt = TITPOOLSIZE;
-			printf("   allocated new pool\n");
+			cntp++;
+			printf("   allocated new pool %d: added %d out of %d\n", cntp, cnt2, cnt1);
 
 		}
 
@@ -102,17 +110,14 @@ void process_line(uint64 xuid, uint32 titleid, int utime, int secs)	{
 
 		i = 1;		// because we just wrote to [0]
 		pl = tpool++;
+		cnt2++;
 	
 	}
 
 	pl->titleid[i] = titleid;
 	pl->secs[i] += secs;
 
-	// counting different titleids
-	memset(&t, 0, sizeof(t));
-	t.titleid = titleid;
-	ftree_upsert(titleids, (ftree_el *)&t);
-
+	cnt1++;
 
 }
 
@@ -150,6 +155,6 @@ void process(int type, int u1, int u2, char *part)	{
 
 	}
 
-	printf("Total xuids: %d, titleids: %d", xuids->fp, titleids->fp);
+	printf("Total xuids: %d, titleids: %d\n", xuids->fp, titleids->fp);
 
 }
