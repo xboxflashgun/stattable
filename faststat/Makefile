@@ -1,6 +1,6 @@
 obj = stater.o ftree.o copy.o process.o
-# CFLAGS = -g -O0 -I/opt/pgpro/ent-15/include/
-CFLAGS = -O -I/opt/pgpro/ent-15/include/
+CFLAGS = -g -O0 -I/opt/pgpro/ent-15/include/
+# CFLAGS = -O -I/opt/pgpro/ent-15/include/
 
 stater:	$(obj)
 	cc -o stater $(obj) -L /opt/pgpro/ent-15/lib -lpq

@@ -149,7 +149,13 @@ void process(int type, int u1, int u2, char *part)	{
 	xuids = ftree_init(65535, sizeof(XUID), xuidcomp);
 	titleids = ftree_init(8191, sizeof(TITLEID), titleidcomp);
 
-	while( line = readstr() )	{
+	while( PQgetCopyData(conn, buffer, 0) > 0 )	{
+
+		line = decodestr(buffer);
+		PQfreemem(*buffer);
+
+		if(line == NULL)		// skip NULL secs
+			continue;
 
 		process_line(line->xuid, line->titleid, line->utime, line->secs);
 

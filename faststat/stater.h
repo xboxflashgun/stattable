@@ -52,7 +52,7 @@ typedef struct {
 
 void dump_tree();
 
-LINE * readstr();
+LINE * decodestr(char **buf);
 
 
 #pragma pack (pop)

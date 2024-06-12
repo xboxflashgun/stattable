@@ -6,21 +6,14 @@
 #include "stater.h"
 
 #pragma pack (push, 1)
-static union {
+typedef union {
 	LINE l;
 	char c[sizeof(LINE)];
-} line;
+} uline;
+
+static uline line;
+
 #pragma pack (pop)
-
-LINE * readstr()	{
-
-	static char *p;
-	static char **buffer = &p;
-
-	int res;
-	res = PQgetCopyData(conn, buffer, 0);
-	if(res < 0)
-		return NULL;
 
 	/*
 	// dump buffer
@@ -30,6 +23,8 @@ LINE * readstr()	{
 		printf("%02x ", *(unsigned char *)((*buffer)+i));
 	}
 	printf("\n\n");		*/
+
+LINE * decodestr(char **buffer)	{
 
 	union intchar num;
 	num.i = 0;
@@ -80,8 +75,7 @@ LINE * readstr()	{
 		line.c[19] = (*buffer)[38];
 	}
 
-	PQfreemem(*buffer);
-
+	printf("%lld\n", line.l.xuid);
 	return &line.l;
 
 }
