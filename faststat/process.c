@@ -6,28 +6,7 @@
 
 #include "stater.h"
 
-#define MAXTITLES (12)
 #define TITPOOLSIZE (1000)
-
-#pragma pack (push, 4)
-
-typedef struct {
-	uint64 secs[MAXTITLES];
-	uint32 titleid[MAXTITLES];
-} TITINFO;
-
-typedef struct {
-	ftree_el ftr;
-	uint64 xuid;
-	TITINFO pl;			// payload
-} XUID;
-
-typedef struct {
-	ftree_el ftr;
-	uint32 titleid;		// ftree payload
-} TITLEID;
-
-#pragma pack (pop)
 
 static int xuidcomp(XUID *a, XUID *b)	{
 
@@ -160,7 +139,7 @@ void process(int type, int u1, int u2, char *part)	{
 
 	process_line(line->xuid, line->titleid, line->utime, line->secs);
 
-	while( PQgetCopyData(conn, (char **) buffer, 0) > 0 )	{
+	while( PQgetCopyData(conn, (char **) buffer, 0) >= 0 )	{
 
 		line = decodestr(buffer, 0);
 		PQfreemem((char *) *buffer);
@@ -171,6 +150,11 @@ void process(int type, int u1, int u2, char *part)	{
 		process_line(line->xuid, line->titleid, line->utime, line->secs);
 
 	}
+
+	res = PQgetResult(conn);
+	printf("COPY result status: %d\n", PQresultStatus(res));
+	res = PQgetResult(conn);
+	printf("COPY result status: %d\n", PQresultStatus(res));
 
 	printf("Total xuids: %d, titleids: %d\n", xuids->fp, titleids->fp);
 

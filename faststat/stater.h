@@ -2,6 +2,8 @@
 #define uint32 unsigned int
 #define uchar  unsigned char
 
+#define MAXTITLES (12)
+
 #pragma pack (push, 1)
 
 extern void process(int type, int u1, int u2, char *part);
@@ -33,6 +35,7 @@ extern void ftree_free(ftree *f);
 
 #define ftree_get(f,p) ((ftree_el *) (f->a + (uint64)p * f->so))
 
+extern ftree *xuids;
 
 extern int u1;
 extern int u2;
@@ -54,6 +57,23 @@ typedef struct {
 	int utime;
 	int secs;
 } LINE;
+
+// process.c
+typedef struct {
+    uint64 secs[MAXTITLES];
+    uint32 titleid[MAXTITLES];
+} TITINFO;
+
+typedef struct {
+    ftree_el ftr;
+    uint64 xuid;
+    TITINFO pl;         // payload
+} XUID;
+
+typedef struct {
+    ftree_el ftr;
+    uint32 titleid;     // ftree payload
+} TITLEID;
 
 void dump_tree();
 
