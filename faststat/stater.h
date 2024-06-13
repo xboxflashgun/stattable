@@ -52,7 +52,7 @@ typedef struct {
 
 void dump_tree();
 
-LINE * decodestr(char **buf);
+LINE * decodestr(uchar **buf, int offset);
 
 
 #pragma pack (pop)

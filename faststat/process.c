@@ -127,8 +127,8 @@ void process(int type, int u1, int u2, char *part)	{
 	PGresult* res;
 
 	char req[256];
-	static char *p;
-	static char **buffer = &p;
+	static uchar *p;
+	uchar **buffer = &p;
 	LINE *line;
 
 	sprintf(req, "copy %s to STDOUT (format BINARY)", part);
@@ -142,17 +142,28 @@ void process(int type, int u1, int u2, char *part)	{
 	}
 
 	int r;
-	r = PQgetCopyData( conn, buffer, 0 );	//  skip header
-	printf("res-header=%d\n", r);
+	r = PQgetCopyData( conn, (char **) buffer, 0 );	//  skip header
+
+	// first row goes after header
+	union intchar len;
+	len.c[0] = (*buffer)[19];
+	len.c[1] = (*buffer)[18];
+	len.c[2] = (*buffer)[17];
+	len.c[3] = (*buffer)[16];
+
+	line = decodestr(buffer, 19 + len.i);
+
 	PQfreemem(*buffer);
 
 	xuids = ftree_init(65535, sizeof(XUID), xuidcomp);
 	titleids = ftree_init(8191, sizeof(TITLEID), titleidcomp);
 
-	while( PQgetCopyData(conn, buffer, 0) > 0 )	{
+	process_line(line->xuid, line->titleid, line->utime, line->secs);
 
-		line = decodestr(buffer);
-		PQfreemem(*buffer);
+	while( PQgetCopyData(conn, (char **) buffer, 0) > 0 )	{
+
+		line = decodestr(buffer, 0);
+		PQfreemem((char *) *buffer);
 
 		if(line == NULL)		// skip NULL secs
 			continue;
@@ -164,3 +175,5 @@ void process(int type, int u1, int u2, char *part)	{
 	printf("Total xuids: %d, titleids: %d\n", xuids->fp, titleids->fp);
 
 }
+
+
