@@ -42,6 +42,11 @@ union intchar {
 	char c[4];
 };
 
+union llichar {
+	uint64 i;
+	char c[8];
+};
+
 // copy.c
 typedef struct {
 	uint64 xuid;
