@@ -54,5 +54,6 @@ void dump_tree();
 
 LINE * decodestr(uchar **buf, int offset);
 
+void readlangs();
 
 #pragma pack (pop)

@@ -27,6 +27,9 @@ int main(int argc, char *argv[])      {
 
 	}
 
+	readlangs();
+	exit(0);
+
 	type = atoi(argv[1]);
 	u1 = atoi(argv[2]);
 	u2 = atoi(argv[3]);

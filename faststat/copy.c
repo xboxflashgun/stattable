@@ -36,14 +36,16 @@ LINE * decodestr(uchar **buffer, int off)	{
 		return NULL;
 
 	// xuid
+	line.l.xuid = 0;
+
 	line.c[0] = (*buffer)[13 + off];
 	line.c[1] = (*buffer)[12 + off];
 	line.c[2] = (*buffer)[11 + off];
 	line.c[3] = (*buffer)[10 + off];
 	line.c[4] = (*buffer)[9 + off];
 	line.c[5] = (*buffer)[8 + off];
-	line.c[6] = (*buffer)[7 + off];
-	line.c[7] = (*buffer)[6 + off];
+	// line.c[6] = (*buffer)[7 + off];		// reserved for countryid
+	// line.c[7] = (*buffer)[6 + off];		// reserved for langid
 
 	// titleid
 	line.c[8]  = (*buffer)[25 + off];
