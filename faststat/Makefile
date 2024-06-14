@@ -1,4 +1,4 @@
-obj = stater.o ftree.o copy.o process.o getlangs.o group.o
+obj = stater.o ftree.o copy.o process.o getlangs.o group.o report.o
 CFLAGS = -g -O0 -I/opt/pgpro/ent-15/include/
 # CFLAGS = -O -I/opt/pgpro/ent-15/include/
 
@@ -16,6 +16,8 @@ copy.o:	stater.h
 getlangs.o: stater.h
 
 group.o: stater.h
+
+report.o: stater.h
 
 clean:
 	rm stater $(obj)

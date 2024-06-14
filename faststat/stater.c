@@ -42,6 +42,8 @@ int main(int argc, char *argv[])      {
 
 	grouptitles();
 
+	report();
+
 	PQfinish(conn);
 
 	return 0;

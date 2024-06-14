@@ -37,6 +37,7 @@ extern void ftree_free(ftree *f);
 #define ftree_get(f,p) ((ftree_el *) (f->a + (uint64)p * f->so))
 
 extern char *xuids2str(int);
+extern char *titleid2str(int);
 
 extern void grouptitles(void);
 
@@ -101,5 +102,6 @@ void dump_tree();
 LINE * decodestr(uchar **buf, int offset);
 
 void readlangs();
+void report();
 
 #pragma pack (pop)

@@ -80,8 +80,6 @@ void readlangs()	{
 
 	}
 
-	printf("Setting SingleRowMode\n");
-
 	r = PQsetSingleRowMode(conn);
 
 	if ( ! r )	{
@@ -90,10 +88,6 @@ void readlangs()	{
 		exit(1);
 
 	}
-
-	printf("SingleRowMode is set\n");
-
-//	ftree_dump(xuids, xuids2str);
 
 	while( (res = PQgetResult(conn)) != NULL)	{
 

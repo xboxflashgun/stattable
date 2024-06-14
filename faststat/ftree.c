@@ -17,6 +17,14 @@ char *xuids2str(int p)	{
 
 }
 
+char *titleid2str(int p)	{
+
+	static char buf[32];
+	sprintf(buf, "%u", ((TITLEID *)ftree_get(titleids, p))->titleid);
+	return buf;
+
+}
+
 static void subdump(ftree *f, int p)	{
 
 	ftree_el *el = (ftree_el *) (f->a + p * f->so);
