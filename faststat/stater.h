@@ -1,5 +1,6 @@
 #define uint64 unsigned long long
 #define uint32 unsigned int
+#define uint16 unsigned short int
 #define uchar  unsigned char
 
 #define MAXTITLES (12)
@@ -30,12 +31,17 @@ typedef struct {
 
 extern ftree *ftree_init(int N, int so, int (*comp)());
 extern int ftree_upsert(ftree *f, ftree_el *el);
-extern void ftree_dump(ftree *f);
+extern void ftree_dump(ftree *f, char *strfunc(int));
 extern void ftree_free(ftree *f);
 
 #define ftree_get(f,p) ((ftree_el *) (f->a + (uint64)p * f->so))
 
+extern char *xuids2str(int);
+
+extern void grouptitles(void);
+
 extern ftree *xuids;
+extern ftree *titleids;
 
 extern int u1;
 extern int u2;
@@ -71,9 +77,24 @@ typedef struct {
 } XUID;
 
 typedef struct {
+	uint64 secs;
+	uint32 players;
+	uint16 cl;
+} TITDATA;
+
+typedef struct {
     ftree_el ftr;
     uint32 titleid;     // ftree payload
+	TITDATA **td;
 } TITLEID;
+
+typedef struct {
+	int pl;
+	uint16 cl;
+} CL;		// country-lang
+
+extern int cls;			// number of country-lang pairs
+extern CL cl[];			// sorted pairs of country-lang
 
 void dump_tree();
 

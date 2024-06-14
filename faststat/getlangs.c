@@ -3,23 +3,51 @@
 
 #include "stater.h"
 
+CL cl[512];		// country-lang pairs
+int cls;		// number of country-lang pairs
+
+int clcompare(const void *a, const void *b)	{
+
+	return (int)((CL *)b)->pl - ((CL *)a)->pl;
+
+}
+
 void setlang(uint64 xuid, int cid, int lid)	{
 
 	int p;
 
-	for(p = xuids->root; p != -1;)
-		if(((XUID *)ftree_get(xuids, p))->xuid == xuid)
-			break;
-		else if(((XUID *)ftree_get(xuids, p))->xuid >= xuid)
+	for(p = xuids->root; p != -1;)	{
+		uint64 x = ((XUID *)ftree_get(xuids, p))->xuid & 0xffffffffffff;
+		if(x > xuid)
 			p = ftree_get(xuids, p)->l;
-		else
+		else if(x < xuid)
 			p = ftree_get(xuids, p)->r;
+		else
+			break;
+	}
 
 	if( p == -1 )		// no xuid
 		return;
 
 	((XUID *)ftree_get(xuids, p))->xuid |= (uint64)cid << 48;
 	((XUID *)ftree_get(xuids, p))->xuid |= (uint64)lid << 56;
+
+	int c = cid | (lid << 8);
+
+
+	for(p = 0; cl[p].cl; p++)
+		if(cl[p].cl == c)
+			break;
+
+
+	if(cl[p].cl)
+		cl[p].pl++;
+	else	{
+		cl[p].cl = c;
+		cl[p].pl = 1;
+		cls++;
+		qsort(cl, p, sizeof(CL), clcompare);
+	}
 
 }
 
@@ -65,6 +93,8 @@ void readlangs()	{
 
 	printf("SingleRowMode is set\n");
 
+//	ftree_dump(xuids, xuids2str);
+
 	while( (res = PQgetResult(conn)) != NULL)	{
 
 		ExecStatusType rs;
@@ -102,7 +132,10 @@ void readlangs()	{
 
 	}
 
-	printf("Well done\n");
+	for(int i=0; i != cls; i++)
+		printf("  %04x %7d\n", cl[i].cl, cl[i].pl);
+
+	printf("Well done cls=%d\n",cls);
 
 }
 

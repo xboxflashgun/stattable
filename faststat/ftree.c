@@ -7,10 +7,20 @@
 
 static void rebalance(ftree *f);
 
+static char *(*el2str)(int p);
+
+char *xuids2str(int p)	{
+
+	static char buf[64];
+	sprintf(buf, "%llu", ((XUID *)ftree_get(xuids, p))->xuid);	// + 0x9000000000000);
+	return buf;
+
+}
+
 static void subdump(ftree *f, int p)	{
 
 	ftree_el *el = (ftree_el *) (f->a + p * f->so);
-	printf("    p=%2d l=%2d r=%2d\n", p, el->l, el->r);
+	printf("    p=%2d l=%2d r=%2d el=%s\n", p, el->l, el->r, el2str(p));
 	if( el->l != -1 )
 		subdump(f, el->l);
 	if( el->r != -1 )
@@ -18,8 +28,9 @@ static void subdump(ftree *f, int p)	{
 
 }
 
-void ftree_dump(ftree *f)	{
+void ftree_dump(ftree *f, char *strfunc())	{
 
+	el2str = strfunc;
 	printf("  tree dump root=%d\n", f->root);
 	subdump(f, f->root);
 
@@ -110,7 +121,6 @@ static void merge(ftree *f)	{
 
 	int i, st, l, r;
 
-	// printf("  pass 1\n");
 	for(i=0; i < f->fp; i += 2)
 		ftree_get(f, sorted[i])->l = ftree_get(f, sorted[i])->r = -1;
 
@@ -130,8 +140,6 @@ static void merge(ftree *f)	{
 	}
 
 	f->root = sorted[st/4 - 1];
-	// printf("  tree after rebalancing, root=%d\n", f->root);
-	// ftree_dump(f);
 
 }
 
@@ -140,15 +148,10 @@ static void rebalance(ftree *f)	{
 	sorted = calloc(f->N, sizeof(int));
 
 	printf("Rebalancing with maxdepth=%d  N=%d\n", f->maxdepth, f->N);
-	// ftree_dump(f);
 
 	sp = 0;
 	mksort(f, f->root);
 
-	// printf("  tree after sorting:\n");
-	// ftree_dump(f);
-
-	// printf("merging fp=%d\n", f->fp);
 	merge(f);
 
 	free(sorted);

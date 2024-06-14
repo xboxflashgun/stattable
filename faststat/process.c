@@ -10,13 +10,15 @@
 
 static int xuidcomp(XUID *a, XUID *b)	{
 
-	return a->xuid - b->xuid;
+	long long diff = (long long int)(a->xuid & 0xffffffffffff) - (long long int)(b->xuid & 0xffffffffffff);
+	// printf("  compare: %llu %llu comp=%lld\n", a->xuid & 0xffffffffffff, b->xuid & 0xffffffffffff, diff);
+	return (diff < 0 ) ? -1: (diff > 0) ? 1 : 0;
 
 }
 
 static int titleidcomp(TITLEID *a, TITLEID *b)	{
 
-	return a->titleid - b->titleid;
+	return (int)(a->titleid) - (int)(b->titleid);
 
 }
 
@@ -157,6 +159,7 @@ void process(int type, int u1, int u2, char *part)	{
 	printf("COPY result status: %d\n", PQresultStatus(res));
 
 	printf("Total xuids: %d, titleids: %d\n", xuids->fp, titleids->fp);
+	// ftree_dump(xuids, xuids2str);
 
 }
 

@@ -40,6 +40,8 @@ int main(int argc, char *argv[])      {
 
 	readlangs();
 
+	grouptitles();
+
 	PQfinish(conn);
 
 	return 0;
