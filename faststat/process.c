@@ -11,14 +11,14 @@
 static int xuidcomp(XUID *a, XUID *b)	{
 
 	long long diff = (long long int)(a->xuid & 0xffffffffffff) - (long long int)(b->xuid & 0xffffffffffff);
-	// printf("  compare: %llu %llu comp=%lld\n", a->xuid & 0xffffffffffff, b->xuid & 0xffffffffffff, diff);
 	return (diff < 0 ) ? -1: (diff > 0) ? 1 : 0;
 
 }
 
 static int titleidcomp(TITLEID *a, TITLEID *b)	{
 
-	return (int)(a->titleid) - (int)(b->titleid);
+	long long diff = (long long)(a->titleid) - (long long)(b->titleid);
+	return (diff < 0 ) ? -1: (diff > 0) ? 1 : 0;
 
 }
 

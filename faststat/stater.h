@@ -85,7 +85,7 @@ typedef struct {
 typedef struct {
     ftree_el ftr;
     uint32 titleid;     // ftree payload
-	TITDATA **td;
+	TITDATA *td;
 } TITLEID;
 
 typedef struct {

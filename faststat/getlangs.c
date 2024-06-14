@@ -132,8 +132,8 @@ void readlangs()	{
 
 	}
 
-	for(int i=0; i != cls; i++)
-		printf("  %04x %7d\n", cl[i].cl, cl[i].pl);
+	// for(int i=0; i != cls; i++)
+	//	printf("  %04x %7d\n", cl[i].cl, cl[i].pl);
 
 	printf("Well done cls=%d\n",cls);
 
