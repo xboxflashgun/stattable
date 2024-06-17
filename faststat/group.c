@@ -4,21 +4,32 @@
 
 #include "stater.h"
 
-void init_titdata( int p )
+void init_titdata( int p, int off, CL *cl, int cnt )
 {
 
-	TITLEID *t = ((TITLEID *)ftree_get(titleids, p));
-	
-	t->td = calloc(cls, sizeof(TITDATA));
+	uchar *t = ((uchar *)ftree_get(titleids, p));
+	TITDATA **td = (TITDATA **)(t + off);
+	(*td) = (TITDATA *)calloc(cnt, sizeof(TITDATA));
 
 	// setting up country/lang list
-	for(int i = 0; i != cls; i++)
-		(t->td)[i].cl = cl[i].cl;
+	for(int i = 0; i != cnt; i++)
+		(*td)[i].cl = cl[i].cl;
 
+	// printf("p=%d off=%d cnt=%d l=%d r=%d\n", p, off, cnt, ftree_get(titleids, p)->l, ftree_get(titleids, p)->r);
 	if(ftree_get(titleids, p)->l != -1)
-		init_titdata(ftree_get(titleids, p)->l);
+		init_titdata(ftree_get(titleids, p)->l, off, cl, cnt);
 	if(ftree_get(titleids, p)->r != -1)
-		init_titdata(ftree_get(titleids, p)->r);
+		init_titdata(ftree_get(titleids, p)->r, off, cl, cnt);
+
+}
+
+void updatestat(TITDATA *t, int cl, uint64 secs)	{
+
+	while(t->cl != cl)
+		t++;
+
+	t->secs += secs;
+	t->players++;
 
 }
 
@@ -41,12 +52,11 @@ void process_xuid(uint32 titleid, uint64 secs, uint16 clx)	{
 		exit(1);
 	}
 
-	TITDATA *t = (TITDATA *)(((TITLEID *)ftree_get(titleids, i))->td);	// titleid data
-	while(t->cl != clx)
-		t++;
+	TITDATA *t = (TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdcl);	// titleid data
 
-	t->secs += secs;
-	t->players++;
+	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdcl), clx, secs);
+	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdc), clx >> 8, secs);		// country
+	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdl), clx & 0xff, secs);	// lang
 
 }
 
@@ -79,7 +89,9 @@ void grouptitles()	{
 	// ftree_dump(titleids, titleid2str);
 	
 	// init TITLEID TITDATA
-	init_titdata( titleids->root );
+	init_titdata( titleids->root, offsetof(TITLEID, tdcl), cl, cls );
+	init_titdata( titleids->root, offsetof(TITLEID, tdc), lang, langs );
+	init_titdata( titleids->root, offsetof(TITLEID, tdl), coun, couns );
 
 	printf("Titleid prepared, scanning xuids tree\n");
 

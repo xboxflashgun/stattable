@@ -6,11 +6,36 @@
 CL cl[512];		// country-lang pairs
 int cls;		// number of country-lang pairs
 
+CL lang[512];	// languages
+int langs;
+
+CL coun[512];	// countries
+int couns;
+
 int clcompare(const void *a, const void *b)	{
 
 	return (int)((CL *)b)->pl - ((CL *)a)->pl;
 
 }
+
+void updatelist(CL *l, int cl, int *cnt)	{
+
+	int p;
+	for(p = 0; l[p].cl; p++)
+		if(l[p].cl == cl)
+			break;
+
+	if(l[p].cl)
+		l[p].pl++;
+	else	{
+		l[p].cl = cl;
+		l[p].pl = 1;
+		(*cnt)++;
+		qsort(l, p, sizeof(CL), clcompare);
+	}
+
+}
+
 
 void setlang(uint64 xuid, int cid, int lid)	{
 
@@ -34,20 +59,9 @@ void setlang(uint64 xuid, int cid, int lid)	{
 
 	int c = cid | (lid << 8);
 
-
-	for(p = 0; cl[p].cl; p++)
-		if(cl[p].cl == c)
-			break;
-
-
-	if(cl[p].cl)
-		cl[p].pl++;
-	else	{
-		cl[p].cl = c;
-		cl[p].pl = 1;
-		cls++;
-		qsort(cl, p, sizeof(CL), clcompare);
-	}
+	updatelist(cl, c, &cls);
+	updatelist(lang, lid, &langs);
+	updatelist(coun, cid, &couns);
 
 }
 

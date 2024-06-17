@@ -6,7 +6,7 @@
 void scan_titleids(int p)	{
 
 	uint32 titleid = ((TITLEID *)ftree_get(titleids, p))->titleid;
-	TITDATA *t = (TITDATA *)(((TITLEID *)ftree_get(titleids, p))->td);  // titleid data
+	TITDATA *t = (TITDATA *)(((TITLEID *)ftree_get(titleids, p))->tdcl);  // titleid data
 
 	while(t->cl)	{
 		if(t->players)

@@ -86,7 +86,9 @@ typedef struct {
 typedef struct {
     ftree_el ftr;
     uint32 titleid;     // ftree payload
-	TITDATA *td;
+	TITDATA *tdcl;		// country-lang
+	TITDATA *tdc;		// country
+	TITDATA *tdl;		// lang
 } TITLEID;
 
 typedef struct {
@@ -96,6 +98,12 @@ typedef struct {
 
 extern int cls;			// number of country-lang pairs
 extern CL cl[];			// sorted pairs of country-lang
+
+extern int langs;		// number of langs
+extern CL lang[];
+
+extern int couns;		// number of countries
+extern CL coun[];
 
 void dump_tree();
 
