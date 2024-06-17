@@ -9,7 +9,7 @@ void init_titdata( int p, int off, CL *cl, int cnt )
 
 	uchar *t = ((uchar *)ftree_get(titleids, p));
 	TITDATA **td = (TITDATA **)(t + off);
-	(*td) = (TITDATA *)calloc(cnt, sizeof(TITDATA));
+	(*td) = (TITDATA *)calloc(cnt+1, sizeof(TITDATA));
 
 	// setting up country/lang list
 	for(int i = 0; i != cnt; i++)
@@ -62,11 +62,9 @@ void process_xuid(uint32 titleid, uint64 secs, uint16 clx)	{
 		exit(1);
 	}
 
-	TITDATA *t = (TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdcl);	// titleid data
-
 	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdcl), clx, secs);
 	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdc), clx & 0xff, secs);		// country
-	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdl), clx >> 8, secs);	// lang
+	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdl), clx >> 8, secs);			// lang
 
 	((TITLEID *)ftree_get(titleids, i))->players++; 
 	((TITLEID *)ftree_get(titleids, i))->secs += secs; 
@@ -109,6 +107,7 @@ void grouptitles()	{
 	// ftree_dump(titleids, titleid2str);
 	
 	// init TITLEID TITDATA
+	printf("Country-lang pairs: %d, countries: %d, langs: %d\n", cls, couns, langs);
 	init_titdata( titleids->root, offsetof(TITLEID, tdcl), cl, cls );
 	init_titdata( titleids->root, offsetof(TITLEID, tdc), coun, couns );
 	init_titdata( titleids->root, offsetof(TITLEID, tdl), lang, langs );
