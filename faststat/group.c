@@ -65,8 +65,8 @@ void process_xuid(uint32 titleid, uint64 secs, uint16 clx)	{
 	TITDATA *t = (TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdcl);	// titleid data
 
 	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdcl), clx, secs);
-	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdc), clx >> 8, secs);		// country
-	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdl), clx & 0xff, secs);	// lang
+	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdc), clx & 0xff, secs);		// country
+	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdl), clx >> 8, secs);	// lang
 
 	((TITLEID *)ftree_get(titleids, i))->players++; 
 	((TITLEID *)ftree_get(titleids, i))->secs += secs; 
@@ -74,6 +74,9 @@ void process_xuid(uint32 titleid, uint64 secs, uint16 clx)	{
 	updatecl(cl, clx, secs);
 	updatecl(lang, clx >> 8, secs);
 	updatecl(coun, clx & 0xff, secs);
+
+	players++;
+	totsecs += secs;
 
 }
 
@@ -107,8 +110,8 @@ void grouptitles()	{
 	
 	// init TITLEID TITDATA
 	init_titdata( titleids->root, offsetof(TITLEID, tdcl), cl, cls );
-	init_titdata( titleids->root, offsetof(TITLEID, tdc), lang, langs );
-	init_titdata( titleids->root, offsetof(TITLEID, tdl), coun, couns );
+	init_titdata( titleids->root, offsetof(TITLEID, tdc), coun, couns );
+	init_titdata( titleids->root, offsetof(TITLEID, tdl), lang, langs );
 
 	printf("Titleid prepared, scanning xuids tree\n");
 

@@ -12,6 +12,9 @@ int langs;
 CL coun[512];	// countries
 int couns;
 
+uint64 totsecs;
+int players;
+
 int clcompare(const void *a, const void *b)	{
 
 	return (int)((CL *)b)->pl - ((CL *)a)->pl;

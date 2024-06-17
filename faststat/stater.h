@@ -108,6 +108,9 @@ extern CL lang[];
 extern int couns;		// number of countries
 extern CL coun[];
 
+extern uint64 totsecs;
+extern int players;
+
 void dump_tree();
 
 LINE * decodestr(uchar **buf, int offset);
