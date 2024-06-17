@@ -13,21 +13,21 @@ void scan_titleids(int p)	{
 
 	while(t->cl)	{
 		if(t->players)
-			fprintf(csv, "a:%u,%d,%d,%d,%lld\n", titleid, t->cl & 0xff, t->cl >> 8, t->players, t->secs);
+			fprintf(csv, "%u,%d,%d,%d,%lld\n", titleid, t->cl & 0xff, t->cl >> 8, t->players, t->secs);
 		t++;
 	}
 
 	t = (TITDATA *)(((TITLEID *)ftree_get(titleids, p))->tdc);
 	while(t->cl)	{
 		if(t->players)
-			fprintf(csv, "b:%u,%d,%d,%d,%lld\n", titleid, t->cl, 0, t->players, t->secs);
+			fprintf(csv, "%u,%d,%d,%d,%lld\n", titleid, t->cl, 0, t->players, t->secs);
 		t++;
 	}
 
 	t = (TITDATA *)(((TITLEID *)ftree_get(titleids, p))->tdl);
 	while(t->cl)	{
 		if(t->players)
-			fprintf(csv, "c:%u,%d,%d,%d,%lld\n", titleid, 0, t->cl, t->players, t->secs);
+			fprintf(csv, "%u,%d,%d,%d,%lld\n", titleid, 0, t->cl, t->players, t->secs);
 		t++;
 	}
 
@@ -58,15 +58,15 @@ void report()	{
 	scan_titleids( titleids->root );
 
 	for(i = 0; i != cls; i++)
-		fprintf(csv, "d:%u,%d,%d,%d,%lld\n", 0, cl[i].cl & 0xff, cl[i].cl >> 8, cl[i].pl, cl[i].secs);
+		fprintf(csv, "%u,%d,%d,%d,%lld\n", 0, cl[i].cl & 0xff, cl[i].cl >> 8, cl[i].pl, cl[i].secs);
 
 	for(i = 0; i != couns; i++)
-		fprintf(csv, "e:%u,%d,%d,%d,%lld\n", 0, coun[i].cl, 0, coun[i].pl, coun[i].secs);
+		fprintf(csv, "%u,%d,%d,%d,%lld\n", 0, coun[i].cl, 0, coun[i].pl, coun[i].secs);
 
 	for(i = 0; i != langs; i++)
-		fprintf(csv, "f:%u,%d,%d,%d,%lld\n", 0, 0, lang[i].cl, lang[i].pl, lang[i].secs);
+		fprintf(csv, "%u,%d,%d,%d,%lld\n", 0, 0, lang[i].cl, lang[i].pl, lang[i].secs);
 
-	fprintf(csv, "g:%u,%d,%d,%d,%lld\n", 0, 0, 0, players, totsecs);
+	fprintf(csv, "%u,%d,%d,%d,%lld\n", 0, 0, 0, players, totsecs);
 
 	printf("End of report\n");
 
