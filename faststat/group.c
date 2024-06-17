@@ -33,6 +33,16 @@ void updatestat(TITDATA *t, int cl, uint64 secs)	{
 
 }
 
+void updatecl(CL *t, int cl, uint64 secs)	{
+
+	while(t->cl != cl)
+		t++;
+
+	t->secs += secs;
+	t->pl++;
+
+}
+
 void process_xuid(uint32 titleid, uint64 secs, uint16 clx)	{
 
 	int i;
@@ -57,6 +67,13 @@ void process_xuid(uint32 titleid, uint64 secs, uint16 clx)	{
 	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdcl), clx, secs);
 	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdc), clx >> 8, secs);		// country
 	updatestat((TITDATA *)(((TITLEID *)ftree_get(titleids, i))->tdl), clx & 0xff, secs);	// lang
+
+	((TITLEID *)ftree_get(titleids, i))->players++; 
+	((TITLEID *)ftree_get(titleids, i))->secs += secs; 
+
+	updatecl(cl, clx, secs);
+	updatecl(lang, clx >> 8, secs);
+	updatecl(coun, clx & 0xff, secs);
 
 }
 

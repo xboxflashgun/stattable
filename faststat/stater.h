@@ -86,12 +86,15 @@ typedef struct {
 typedef struct {
     ftree_el ftr;
     uint32 titleid;     // ftree payload
+	uint32 players;
+	uint64 secs;
 	TITDATA *tdcl;		// country-lang
 	TITDATA *tdc;		// country
 	TITDATA *tdl;		// lang
 } TITLEID;
 
 typedef struct {
+	uint64 secs;
 	int pl;
 	uint16 cl;
 } CL;		// country-lang
