@@ -112,7 +112,25 @@ sub update_type	{
 		# clean-up
 		$dbh->do("delete from stattab where type = $t and players = 0");
 
-		$dbh->do("refresh materialized view concurrently stattotals$t");
+		# $dbh->do("refresh materialized view concurrently stattotals$t");
+		my $t1 = $dbh->selectrow_array("select extract(epoch from now()-interval '1 week 1 hour')::int");
+		my $t2 = $dbh->selectrow_array("select extract(epoch from now())::int");
+		my $t3 = $dbh->selectrow_array("select extract(epoch from date_trunc('week',now()-interval '1 week'))::int");
+
+		print "t1=$t1 t2=$t2 t3=$t3\n";
+
+		system("faststat/stater 0 $t1 $t2 '(select * from presence where utime>=$t3 and utime<$t2)'");
+		$dbh->begin_work();
+		$dbh->do("truncate stattotals1");
+		$dbh->do("COPY stattotals1 (titleid,countryid,langid,players,secs) from STDIN (format csv)");
+		open(F, "< stattab.csv") || die;
+		while(<F>)	{
+			$dbh->pg_putcopydata($_);
+		}
+		close(F);
+		$dbh->pg_putcopyend();
+		$dbh->commit;
+		unlink "stattab.csv";
 
 	}
 }

@@ -67,7 +67,7 @@ LINE * decodestr(uchar **buffer, int off)	{
 	num.c[2] = (*buffer)[35 + off];
 	num.c[3] = (*buffer)[34 + off];
 
-	if(num.i < 0)
+	if(num.i < 0)		// still playing
 		line.l.secs = u2-u1;
 	else {
 
