@@ -31,6 +31,8 @@ void scan_titleids(int p)	{
 		t++;
 	}
 
+	TITLEID *ti = ((TITLEID *)ftree_get(titleids, p));
+	fprintf(csv, "%u,%d,%d,%d,%lld\n", titleid, 0, 0, ti->players, ti->secs);
 
 
 	if(ftree_get(titleids, p)->l != -1)
