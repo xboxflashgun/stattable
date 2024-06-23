@@ -68,7 +68,7 @@ void report()	{
 	for(i = 0; i != langs; i++)
 		fprintf(csv, "%u,%d,%d,%d,%lld\n", 0, 0, lang[i].cl, lang[i].pl, lang[i].secs);
 
-	fprintf(csv, "%u,%d,%d,%d,%lld\n", 0, 0, 0, players, totsecs);
+	fprintf(csv, "%u,%d,%d,%d,%lld\n", 0, 0, 0, xuids->fp, totsecs);
 
 	printf("End of report\n");
 

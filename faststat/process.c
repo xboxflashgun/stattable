@@ -79,7 +79,7 @@ void process_line(uint64 xuid, uint32 titleid, int utime, int secs)	{
 			tpool = calloc(TITPOOLSIZE+1, sizeof(TITINFO));
 			tpoolcnt = TITPOOLSIZE;
 			cntp++;
-			printf("   allocated new pool %d: added %d out of %d\n", cntp, cnt2, cnt1);
+			// printf("   allocated new pool %d: added %d out of %d\n", cntp, cnt2, cnt1);
 
 		}
 

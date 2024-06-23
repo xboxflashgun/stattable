@@ -32,7 +32,7 @@ void updatelist(CL *l, int cl, int *cnt)	{
 		l[p].pl++;
 	else	{
 		l[p].cl = cl;
-		l[p].pl = 1;
+		l[p].pl = 0;
 		(*cnt)++;
 		qsort(l, p, sizeof(CL), clcompare);
 	}
